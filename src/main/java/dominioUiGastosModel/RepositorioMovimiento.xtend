@@ -10,16 +10,9 @@ import org.uqbar.commons.model.annotations.Observable
 @Accessors
 @Observable
 class RepositorioMovimiento extends CollectionBasedRepo<Movimiento> {
-
-	def Movimiento create(String unaDescripcion, double unCosto) {
-		val movimiento = new Movimiento => [
-			descripcion = unaDescripcion
-			monto = unCosto
-		]
-		this.create(movimiento)
-		movimiento
-	}
-
+	
+	double montoMaximo
+	
 	def List<Movimiento> getMovimientos() {
 		allInstances
 	}

@@ -22,20 +22,20 @@ class VistaPrincipalGastosModel {
 	}
 
 	def RepositorioMovimiento getRepositorio() {
-		ApplicationContext.instance.getSingleton(Movimiento) as RepositorioMovimiento
+		ApplicationContext.instance.getSingleton(typeof(Movimiento))
 	}
 
 	def agregarIngreso() {
-		getVerificarIngreso
+		getVerificarIngresoDescripccionMonto
 	}
 
 	def agregarGasto() {
 		movimiento =>[monto = monto * -1]
-		getVerificarIngreso		
+		getVerificarIngresoDescripccionMonto		
 		
 	}
 	
-	def getVerificarIngreso() {
+	def getVerificarIngresoDescripccionMonto() {
 		if (movimiento.descripcion === null || verificarMonto)
 			throw new UserException("El valor ingresado tiene que tener descripcion y monto")
 		else
@@ -46,6 +46,10 @@ class VistaPrincipalGastosModel {
 	
 	def verificarMonto(){
 		(movimiento.monto == 0 || movimiento.monto == -0)
+	}
+	
+	def montoSobrepasaElMaximo(double c) {
+		c <= repositorio.montoMaximo
 	}
 
 

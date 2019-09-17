@@ -17,12 +17,11 @@ class MovimientoBoostrap extends CollectionBasedBootstrap {
 			getSingleton(Movimiento) as RepositorioMovimiento
 
 		repositorioMovimiento => [
-			create("cuchara", -500)
-			create("Cine", -300)
-			create("Sueldo", 5000)
+			create(new Movimiento => [descripcion = "cuchara" monto = -500])
+			create(new Movimiento => [descripcion = "cine" monto = -300])
+			create(new Movimiento => [descripcion = "sueldo" monto = 5000])
+			create(new Movimiento => [descripcion = "extra" monto = 900])
+			montoMaximo = -300
 		]
-		val movimiento = new Movimiento => [descripcion = "hola" monto = 900]
-		repositorioMovimiento.create(movimiento)
-
 	}
 }

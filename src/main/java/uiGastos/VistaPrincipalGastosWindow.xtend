@@ -1,21 +1,22 @@
 package uiGastos
 
+import dominioUiGastosModel.Movimiento
+import dominioUiGastosModel.VistaPrincipalGastosModel
+import java.awt.Color
+import java.time.format.DateTimeFormatter
+import org.uqbar.arena.layout.HorizontalLayout
+import org.uqbar.arena.widgets.Button
 import org.uqbar.arena.widgets.Label
 import org.uqbar.arena.widgets.Panel
+import org.uqbar.arena.widgets.TextBox
+import org.uqbar.arena.widgets.tables.Column
+import org.uqbar.arena.widgets.tables.Table
+import org.uqbar.arena.windows.ErrorsPanel
 import org.uqbar.arena.windows.SimpleWindow
 import org.uqbar.arena.windows.WindowOwner
-import dominioUiGastosModel.VistaPrincipalGastosModel
+import java.time.LocalDate
+
 import static extension org.uqbar.arena.xtend.ArenaXtendExtensions.*
-import org.uqbar.arena.widgets.tables.Table
-import dominioUiGastosModel.Movimiento
-import org.uqbar.arena.widgets.tables.Column
-import org.uqbar.arena.widgets.Button
-import org.uqbar.arena.layout.HorizontalLayout
-import java.awt.Color
-import org.uqbar.arena.widgets.TextBox
-import org.uqbar.arena.windows.ErrorsPanel
-import org.uqbar.arena.bindings.NotNullObservable
-import org.uqbar.lacar.ui.model.transformer.NotEmptyTransformer
 
 class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel> {
 
@@ -65,8 +66,9 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 			numberVisibleRows = 6
 		]
 
+		armarColumnaConFechaMovimiento(tabla, "Fecha: ", "fecha")
 		armarColumna(tabla, "Descripcion", "descripcion")
-		armarColumna(tabla, "Monto: ", "monto")
+		armarColumnaTransformerColorMovientoEnMonto(tabla, "Monto: ", "monto")
 
 	}
 
@@ -92,15 +94,9 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 	}
 
 	override protected createFormPanel(Panel mainPanel) {
-		armarTextLabel(mainPanel,"saldo: ")
-		armarLabel(mainPanel,"saldo")
-		new Label(mainPanel) => [
-			value <=> 'movimiento.descripcion'
-		]
-		new Label(mainPanel) => [
-			value <=> 'movimiento.monto'
-		]
-				
+		armarTextLabel(mainPanel, "saldo: ")
+		armarLabel(mainPanel, "saldo")
+		
 	}
 
 	def protected armarColumna(Table<Movimiento> tabla, String titulo, String nombreBind) {
@@ -111,15 +107,40 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 		]
 	}
 
+	def armarColumnaTransformerColorMovientoEnMonto(Table<Movimiento> tabla, String titulo, String nombreBind) {
+		new Column<Movimiento>(tabla) => [
+			title = titulo
+			bindContentsToProperty(nombreBind)
+			bindBackground(nombreBind).transformer = [ Double m |
+				if(modelObject.montoSobrepasaElMaximo(m)) Color.BLUE else Color.WHITE
+			]
+			bindForeground(nombreBind).transformer = [ Double m |
+				if(modelObject.montoSobrepasaElMaximo(m)) Color.RED else Color.BLACK
+			]
+			fixedSize = 150
+		]
+	}
+
+	def armarColumnaConFechaMovimiento(Table<Movimiento> tabla, String titulo, String nombreBind) {
+		new Column<Movimiento>(tabla) => [
+			title = titulo
+			bindContentsToProperty(nombreBind).transformer = [ LocalDate f |
+				f.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+			]
+			fixedSize = 150
+		]
+	}
+
 	def protected armarTextLabel(Panel panel, String nombreLabel) {
 		new Label(panel).text = nombreLabel
 	}
 
-	def protected armarLabel(Panel panel, String nombreBinding){
+	def protected armarLabel(Panel panel, String nombreBinding) {
 		new Label(panel) => [
 			value <=> nombreBinding
 		]
 	}
+
 	def protected armarTextBox(Panel panel, String nombreBinding) {
 		new TextBox(panel) => [
 			background = Color.ORANGE
