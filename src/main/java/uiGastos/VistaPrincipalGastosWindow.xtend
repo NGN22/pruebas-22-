@@ -17,6 +17,7 @@ import org.uqbar.arena.windows.WindowOwner
 import java.time.LocalDate
 
 import static extension org.uqbar.arena.xtend.ArenaXtendExtensions.*
+import org.uqbar.arena.bindings.NotNullObservable
 
 class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel> {
 
@@ -89,12 +90,13 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 
 		val tabla = new Table(panel, Movimiento) => [
 			items <=> [VistaPrincipalGastosModel model|model.gastos]
+			value <=> "seleccionado"
 			numberVisibleRows = 6
 		]
 
 		armarColumnaConFechaMovimiento(tabla, "Fecha: ", "fecha")
 		armarColumna(tabla, "Descripcion", "descripcion")
-		armarColumnaTransformerColorMovientoEnMonto(tabla, "Monto: ", "monto")
+		armarColumnaTransformerColorEnMonto(tabla, "Monto: ", "monto")
 
 	}
 
@@ -121,7 +123,18 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 	override protected createFormPanel(Panel mainPanel) {
 		armarTextLabel(mainPanel, "saldo: ")
 		armarLabel(mainPanel, "saldo")
-
+		new Button(mainPanel) => [
+			caption = "Abrir Detalle"
+			onClick([|
+				this.crearDetalle(this)
+			])
+			bindEnabled(new NotNullObservable('seleccionado'))
+			disableOnError
+		]
+	}
+	
+	def crearDetalle(VistaPrincipalGastosWindow window) {
+		new DetalleWindows(window,modelObject.seleccionado).open
 	}
 
 	def protected armarColumna(Table<Movimiento> tabla, String titulo, String nombreBind) {
@@ -132,7 +145,7 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 		]
 	}
 
-	def armarColumnaTransformerColorMovientoEnMonto(Table<Movimiento> tabla, String titulo, String nombreBind) {
+	def armarColumnaTransformerColorEnMonto(Table<Movimiento> tabla, String titulo, String nombreBind) {
 		new Column<Movimiento>(tabla) => [
 			title = titulo
 			bindContentsToProperty(nombreBind)

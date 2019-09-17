@@ -17,6 +17,7 @@ class VistaPrincipalGastosModel {
 	double saldo
 	LocalDate fechaDesde
 	LocalDate fechaHasta
+	Movimiento seleccionado
 
 	def getActualizar() {
 		gastos = repositorio.allInstances

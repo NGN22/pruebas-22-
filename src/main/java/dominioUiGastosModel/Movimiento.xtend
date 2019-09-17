@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 @Accessors
 @Observable
-class Movimiento extends Entity {
+class Movimiento extends Entity implements Cloneable {
 	String descripcion
 	double monto
 	LocalDate fecha
