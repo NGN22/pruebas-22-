@@ -6,13 +6,14 @@ import org.apache.commons.collections15.Predicate
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.uqbar.commons.model.CollectionBasedRepo
 import org.uqbar.commons.model.annotations.Observable
+import java.time.LocalDate
 
 @Accessors
 @Observable
 class RepositorioMovimiento extends CollectionBasedRepo<Movimiento> {
-	
+
 	double montoMaximo
-	
+
 	def List<Movimiento> getMovimientos() {
 		allInstances
 	}
@@ -31,6 +32,18 @@ class RepositorioMovimiento extends CollectionBasedRepo<Movimiento> {
 
 	override Class<Movimiento> getEntityType() {
 		typeof(Movimiento)
+	}
+
+	def search(LocalDate primero, LocalDate segundo) {
+		allInstances.filter[mov|this.entreFechas(primero, segundo, mov.fecha)].toList
+	}
+
+	def entreFechas(LocalDate primero, LocalDate segundo, LocalDate fechaMov) {
+		if(criterioFechas(primero, segundo, fechaMov)) true else false
+	}
+
+	def criterioFechas(LocalDate date, LocalDate date2, LocalDate date3) {
+		date3 >= date && date3 <= date2
 	}
 
 	/*

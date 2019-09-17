@@ -32,16 +32,42 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 
 		mainPanel => [
 			val contenedorElementosArriba = new Panel(mainPanel).layout = new HorizontalLayout
+			val contenedorElementosMedio = new Panel(mainPanel).layout = new HorizontalLayout
 			val muestraMovimiento = new Panel(contenedorElementosArriba).layout = new HorizontalLayout
 			val botonesAccion = new Panel(contenedorElementosArriba)
+			val contenedorElementosAbajo = new Panel(mainPanel)
+			val contenedorSaldo = new Panel(mainPanel).layout = new HorizontalLayout
 			crearContenidosContenedorArriba(muestraMovimiento)
 			addActions(botonesAccion)
-			val contenedorElementosAbajo = new Panel(mainPanel)
 			crearContenidosContenedorAbajo(contenedorElementosAbajo)
-			val contenedorSaldo = new Panel(mainPanel).layout = new HorizontalLayout
 			createFormPanel(contenedorSaldo)
+			createContenidosMedio(contenedorElementosMedio)
 		]
 
+	}
+
+	def createContenidosMedio(Panel panel) {
+		
+		armarTextLabel(panel,"Fecha Desde")
+		armarTextBoxFecha(panel,"fechaDesde")
+		armarTextLabel(panel,"Fecha Hasta")
+		armarTextBoxFecha(panel,"fechaHasta")
+		
+		new Button(panel) => [
+			caption = "Filtrar"
+			onClick([|
+				this.modelObject.filtrarGastos
+			])
+			setAsDefault
+			disableOnError
+		]
+	}
+	
+	def armarTextBoxFecha(Panel panel, String nombreBind) {
+		new TextBox(panel) => [
+			(value <=> nombreBind).transformer = new LocalDateTransformer 
+			width = 100
+		]
 	}
 
 	def crearContenidosContenedorArriba(Panel panel) {
@@ -89,14 +115,13 @@ class VistaPrincipalGastosWindow extends SimpleWindow<VistaPrincipalGastosModel>
 			])
 			setAsDefault
 			disableOnError
-
 		]
 	}
 
 	override protected createFormPanel(Panel mainPanel) {
 		armarTextLabel(mainPanel, "saldo: ")
 		armarLabel(mainPanel, "saldo")
-		
+
 	}
 
 	def protected armarColumna(Table<Movimiento> tabla, String titulo, String nombreBind) {

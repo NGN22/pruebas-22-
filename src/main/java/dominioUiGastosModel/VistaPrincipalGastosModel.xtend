@@ -1,12 +1,12 @@
 package dominioUiGastosModel
 
+import java.time.LocalDate
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.uqbar.commons.applicationContext.ApplicationContext
 import org.uqbar.commons.model.annotations.Observable
-import org.uqbar.commons.model.utils.ObservableUtils
-import org.uqbar.arena.bindings.ValueTransformer
 import org.uqbar.commons.model.exceptions.UserException
+import org.uqbar.commons.model.utils.ObservableUtils
 
 @Accessors
 @Observable
@@ -15,6 +15,8 @@ class VistaPrincipalGastosModel {
 	Movimiento movimiento = new Movimiento
 	List<Movimiento> gastos
 	double saldo
+	LocalDate fechaDesde
+	LocalDate fechaHasta
 
 	def getActualizar() {
 		gastos = repositorio.allInstances
@@ -50,6 +52,15 @@ class VistaPrincipalGastosModel {
 	
 	def montoSobrepasaElMaximo(double c) {
 		c <= repositorio.montoMaximo
+	}
+	
+	def filtrarGastosRepositorio(){
+		repositorio.search(fechaDesde,fechaHasta)
+	}
+	
+	def getFiltrarGastos() {
+		gastos = filtrarGastosRepositorio
+		ObservableUtils.firePropertyChanged(this, "gastos", filtrarGastosRepositorio)
 	}
 
 
